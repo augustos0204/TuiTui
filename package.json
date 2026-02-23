@@ -1,0 +1,23 @@
+{
+  "name": "test-opentue",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/main.tsx",
+    "start": "bun run src/main.tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Hello World with OpenTUI",
+  "dependencies": {
+    "@opentui/core": "^0.1.81",
+    "@opentui/react": "^0.1.81",
+    "react": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "typescript": "^5.9.3"
+  }
+}
