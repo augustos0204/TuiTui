@@ -1,5 +1,7 @@
 # TuiTui
 
+![TuiTui Logo](./assets/tuitui-logo.svg)
+
 TuiTui is a Terminal User Interface (TUI) project focused on user-to-user communication, built with OpenTUI and Bun.
 
 This repository is currently in the planning and architecture phase.
