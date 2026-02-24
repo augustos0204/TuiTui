@@ -7,6 +7,11 @@ export const colors = {
   text: "#fff2f2",
   textMuted: "#c4a3a3",
   accent: "#ffd6d6",
+  logger: {
+    info: "#fff2f2",
+    warning: "#ffd166",
+    error: "#ff6b6b",
+  },
 } as const
 
 export type AppColors = typeof colors
