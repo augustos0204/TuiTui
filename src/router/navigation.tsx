@@ -9,7 +9,10 @@ type NavigationProviderProps = {
 }
 
 export function NavigationProvider({ children, availableRoutes }: NavigationProviderProps) {
-  const [stack, setStack] = useState<Route[]>(["home"])
+  const [state, setState] = useState<{ history: Route[], index: number }>({
+    history: ["home"],
+    index: 0,
+  })
 
   const resolveRoute = (route: Route): Route => {
     if (availableRoutes.has(route)) {
@@ -19,12 +22,37 @@ export function NavigationProvider({ children, availableRoutes }: NavigationProv
   }
 
   const navigation = useMemo<NavigationApi>(() => ({
-    route: stack[stack.length - 1],
-    push: (route) => setStack((current) => [...current, resolveRoute(route)]),
-    replace: (route) => setStack((current) => [...current.slice(0, -1), resolveRoute(route)]),
-    back: () => setStack((current) => (current.length > 1 ? current.slice(0, -1) : current)),
-    reset: (route) => setStack([resolveRoute(route)]),
-  }), [stack])
+    route: state.history[state.index] ?? "home",
+    push: (route) => {
+      const nextRoute = resolveRoute(route)
+      setState((current) => ({
+        history: [...current.history.slice(0, current.index + 1), nextRoute],
+        index: current.index + 1,
+      }))
+    },
+    replace: (route) => {
+      const nextRoute = resolveRoute(route)
+      setState((current) => ({
+        history: current.history.map((entry, entryIndex) => (entryIndex === current.index ? nextRoute : entry)),
+        index: current.index,
+      }))
+    },
+    back: () => {
+      setState((current) => ({
+        history: current.history,
+        index: current.index > 0 ? current.index - 1 : current.index,
+      }))
+    },
+    forward: () => {
+      setState((current) => ({
+        history: current.history,
+        index: current.index < current.history.length - 1 ? current.index + 1 : current.index,
+      }))
+    },
+    reset: (route) => {
+      setState({ history: [resolveRoute(route)], index: 0 })
+    },
+  }), [state])
 
   return <NavigationContext.Provider value={navigation}>{children}</NavigationContext.Provider>
 }

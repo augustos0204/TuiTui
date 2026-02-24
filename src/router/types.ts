@@ -7,6 +7,7 @@ export type NavigationApi = {
   push: (route: Route) => void
   replace: (route: Route) => void
   back: () => void
+  forward: () => void
   reset: (route: Route) => void
 }
 
