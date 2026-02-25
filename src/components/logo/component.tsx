@@ -2,25 +2,35 @@ import { useEffect, useRef, useState } from "react"
 import { useTimeline } from "@opentui/react"
 import { colors } from "../../theme/colors"
 
-const FROM_TEXT = "Hello World"
-const TO_TEXT = "TuiTui"
+type LogoProps = {
+  transitionIn?: string
+  transitionOut?: string
+}
 
-function buildTransitionText(progress: number): string {
+function buildTransitionText(progress: number, transitionIn: string, transitionOut: string): string {
   if (progress <= 0.5) {
     const hideProgress = progress / 0.5
-    const visibleChars = Math.ceil(FROM_TEXT.length * (1 - hideProgress))
-    return FROM_TEXT.slice(0, Math.max(0, visibleChars))
+    const visibleChars = Math.ceil(transitionIn.length * (1 - hideProgress))
+    return transitionIn.slice(0, Math.max(0, visibleChars))
   }
 
   const showProgress = (progress - 0.5) / 0.5
-  const visibleChars = Math.ceil(TO_TEXT.length * showProgress)
-  return TO_TEXT.slice(0, Math.min(TO_TEXT.length, visibleChars))
+  const visibleChars = Math.ceil(transitionOut.length * showProgress)
+  return transitionOut.slice(0, Math.min(transitionOut.length, visibleChars))
 }
 
-export default function Logo() {
-  const [text, setText] = useState(FROM_TEXT)
+export default function Logo({
+  transitionIn = "Hello World",
+  transitionOut = "TuiTui",
+}: LogoProps) {
+  const [text, setText] = useState(transitionIn)
   const timelineStarted = useRef(false)
   const timeline = useTimeline({ duration: 1400, autoplay: false, loop: false })
+
+  useEffect(() => {
+    setText(transitionIn)
+    timelineStarted.current = false
+  }, [transitionIn, transitionOut])
 
   useEffect(() => {
     if (timelineStarted.current) {
@@ -36,15 +46,15 @@ export default function Logo() {
       ease: "inOutQuad",
       onUpdate: (animation) => {
         const progress = animation.targets[0].progress as number
-        setText(buildTransitionText(progress))
+        setText(buildTransitionText(progress, transitionIn, transitionOut))
       },
       onComplete: () => {
-        setText(TO_TEXT)
+        setText(transitionOut)
       },
     })
 
     timeline.play()
-  }, [timeline])
+  }, [timeline, transitionIn, transitionOut])
 
   return (
     <box marginBottom={1}>
