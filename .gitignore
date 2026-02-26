@@ -23,6 +23,10 @@ pnpm-debug.log*
 .env.*
 !.env.example
 
+# local auth/session data
+.data/
+.wwebjs*/
+
 # TypeScript
 *.tsbuildinfo
 
