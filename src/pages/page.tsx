@@ -1,8 +1,17 @@
-import Logo from "../components/logo/component"
+import Logo from "../components/logo/AsciiLogo"
+import { useClients } from "../clients/context"
 import type { PageProps } from "../router/types"
-import { colors } from "../theme/colors"
+import { useAppColors } from "../theme/context"
 
 export default function HomePage({ navigation }: PageProps) {
+  const colors = useAppColors()
+  const { clients, openClient } = useClients()
+
+  const options = clients.map((client) => ({
+    name: client.name,
+    description: `Status: ${client.authStatus}`,
+    value: client.id,
+  }))
 
   return (
     <box
@@ -16,7 +25,7 @@ export default function HomePage({ navigation }: PageProps) {
       width="100%"
       height="100%"
     >
-      <Logo />
+      <Logo transitionIn="Hello World" transitionOut="TuiTui" />
       <box
         flexDirection="column"
         alignItems="center"
@@ -44,7 +53,7 @@ export default function HomePage({ navigation }: PageProps) {
         >
           <select
             focused
-            showDescription={false}
+            showDescription
             backgroundColor={colors.surface}
             textColor={colors.accent}
             focusedBackgroundColor={colors.surface}
@@ -52,17 +61,14 @@ export default function HomePage({ navigation }: PageProps) {
             selectedBackgroundColor={colors.primary}
             selectedTextColor={colors.background}
             height={"100%"}
-            options={[
-              {
-                name: "CONTACTS",
-                description: "",
-                value: "contacts",
-              },
-            ]}
-            onSelect={(_, option) => {
-              if (typeof option?.value === "string") {
-                navigation.push(option.value)
+            options={options}
+            onSelect={async (_, option) => {
+              if (typeof option?.value !== "string") {
+                return
               }
+
+              const route = await openClient(option.value)
+              navigation.push(route)
             }}
           />
         </box>

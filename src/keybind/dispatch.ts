@@ -1,6 +1,7 @@
 import type { KeyEvent, KeybindContext } from "../router/keybind-types"
 import { toKeyChord } from "./chord"
 import { commands, type KeybindCommandMap } from "./commands"
+import { emitKeybindIntent } from "./intent-bus"
 import { keymap, type Keymap } from "./keymap"
 
 type DispatchConfig = {
@@ -20,9 +21,15 @@ function dispatchFromConfig(key: KeyEvent, context: KeybindContext, config: Disp
     return false
   }
 
+  emitKeybindIntent({
+    route: context.route,
+    commandId,
+    key,
+  })
+
   const command = config.commands[commandId]
   if (!command) {
-    return false
+    return true
   }
 
   command(context, key)

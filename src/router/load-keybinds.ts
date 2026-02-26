@@ -1,7 +1,7 @@
 import { readdir } from "node:fs/promises"
 import path from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
-import type { KeybindHandler, KeybindModule } from "./keybind-types"
+import type { KeybindHandler, KeybindModule, KeybindShortcut } from "./keybind-types"
 import type { Route } from "./types"
 
 const KEYBIND_FILE = "keybind.ts"
@@ -36,7 +36,12 @@ function routeFromKeybindFile(pagesDir: string, absoluteFilePath: string): Route
   return relativePath.replace(/\/keybind\.ts$/, "")
 }
 
-export async function loadPageKeybinds(): Promise<Record<Route, KeybindHandler>> {
+export type LoadedPageKeybinds = {
+  handlers: Record<Route, KeybindHandler>
+  shortcuts: Record<Route, KeybindShortcut[]>
+}
+
+export async function loadPageKeybinds(): Promise<LoadedPageKeybinds> {
   const currentFile = fileURLToPath(import.meta.url)
   const pagesDir = path.resolve(path.dirname(currentFile), "../pages")
   const files = await walkKeybindFiles(pagesDir)
@@ -50,8 +55,15 @@ export async function loadPageKeybinds(): Promise<Record<Route, KeybindHandler>>
       throw new Error(`Keybind file must export onKeybind function: ${filePath}`)
     }
 
-    return [route, module.onKeybind] as const
+    return {
+      route,
+      handler: module.onKeybind,
+      shortcuts: module.shortcuts ?? [],
+    }
   }))
 
-  return Object.fromEntries(entries)
+  return {
+    handlers: Object.fromEntries(entries.map((entry) => [entry.route, entry.handler])),
+    shortcuts: Object.fromEntries(entries.map((entry) => [entry.route, entry.shortcuts])),
+  }
 }

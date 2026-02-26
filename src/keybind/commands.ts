@@ -4,6 +4,9 @@ export type KeybindCommand = (context: KeybindContext, key: KeyEvent) => void
 export type KeybindCommandMap = Record<string, KeybindCommand>
 
 export const commands: KeybindCommandMap = {
+  "shortcuts.toggle": (context) => {
+    context.toggleShortcutsOverlay()
+  },
   "console.toggle": (context) => {
     context.toggleConsole()
   },

@@ -21,11 +21,20 @@ export type KeybindContext = {
   toggleConsole: () => void
   resizeConsoleIncrease: () => void
   resizeConsoleDecrease: () => void
-	clearLogs: () => void
+  clearLogs: () => void
+  logoutActiveClient: () => void
+  toggleShortcutsOverlay: () => void
 }
 
 export type KeybindHandler = (key: KeyEvent, context: KeybindContext) => boolean | void
 
+export type KeybindShortcut = {
+  key: string
+  label: string
+  priority?: number
+}
+
 export type KeybindModule = {
   onKeybind: KeybindHandler
+  shortcuts?: KeybindShortcut[]
 }
