@@ -1,18 +1,19 @@
 import type { LogEntry } from "../../logger/types"
-import { colors } from "../../theme/colors"
+import { useAppColors } from "../../theme/context"
 
 type LoggerBarProps = {
   logs: LogEntry[],
 	height?: number
 }
 
-const levelVisuals = {
-  info: { icon: "[i]", color: colors.logger.info, label: "INFO" },
-  warning: { icon: "[!]", color: colors.logger.warning, label: "WARNING" },
-  error: { icon: "[x]", color: colors.logger.error, label: "ERROR" },
-} as const
-
 export default function LoggerBar({ logs, height = 12 }: LoggerBarProps) {
+  const colors = useAppColors()
+  const levelVisuals = {
+    info: { icon: "[i]", color: colors.logger.info, label: "INFO" },
+    warning: { icon: "[!]", color: colors.logger.warning, label: "WARNING" },
+    error: { icon: "[x]", color: colors.logger.error, label: "ERROR" },
+  } as const
+
   const entries = logs.length > 0
     ? logs
     : [{ level: "info", message: "Ready.", timestamp: Date.now() } satisfies LogEntry]

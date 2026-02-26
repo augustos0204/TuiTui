@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useTimeline } from "@opentui/react"
-import { colors } from "../../theme/colors"
+import { useAppColors } from "../../theme/context"
 
 type LogoProps = {
   transitionIn?: string
@@ -23,6 +23,7 @@ export default function Logo({
   transitionIn = "Hello World",
   transitionOut = "TuiTui",
 }: LogoProps) {
+  const colors = useAppColors()
   const [text, setText] = useState(transitionIn)
   const timelineStarted = useRef(false)
   const timeline = useTimeline({ duration: 1400, autoplay: false, loop: false })
